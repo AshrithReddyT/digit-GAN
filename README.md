@@ -26,5 +26,5 @@ I ran the model on the so popular MNIST data set and tried generating numbers.He
 | *Epoch 14* |
 
 ## Disclaimer
-        I ran the training on a Nvidia 960M and trust me, it's not that fast(took me 15 minutes per epoch).It might not even fit in your GPU.Just tweak the batch size and it should work fine.By the way the second image was after 14th epoch.I stopped it after that as I already started seeing good enough results and also I was too lazy to wait :p
+I ran the training on a Nvidia 960M and trust me, it's not that fast(took me 15 minutes per epoch).It might not even fit in your GPU.Just tweak the batch size and it should work fine.By the way the second image was after 14th epoch.I stopped it after that as I already started seeing good enough results and also I was too lazy to wait :p
 
