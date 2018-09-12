@@ -13,7 +13,7 @@ test_z = np.random.normal(0, 1, (9, 1, 1, 100))
 def test_generator(num_epoch, width=320, height=320, cols = 3,rows = 3):
     test_images = sess.run(g, {z: test_z, isTraining: False})
     
-    dir = './results/Epoch {0}/'.format(num_epoch)
+    dir = './results/Epoch {0}/'.format(num_epoch) 
     if not os.path.isdir(dir):
         os.mkdir(dir)
 
@@ -26,7 +26,7 @@ def test_generator(num_epoch, width=320, height=320, cols = 3,rows = 3):
         plt.savefig(dir+'{0}.jpg'.format(i), bbox_inches='tight',pad_inches = 0)
         thumbnail_width = 64
     thumbnail_height = 64
-    time.sleep(5)
+    time.sleep(5) 
     size = thumbnail_width, thumbnail_height
     new_im = Image.new('RGB', (width, height),(255,255,255,0))
     i = 0
@@ -54,9 +54,10 @@ def test_generator(num_epoch, width=320, height=320, cols = 3,rows = 3):
 
 isTraining = tf.placeholder(dtype=tf.bool)
 
-batch_size = 50
+batch_size = 100
 learning_rate = 0.0002
-epochs = 25
+epochs = 20
+model = 'new_model'
 
 x = tf.placeholder(tf.float32, shape=(None, 64, 64, 1))
 z = tf.placeholder(tf.float32, shape=(None, 1, 1, 100))
@@ -91,6 +92,8 @@ if not os.path.isdir('results'):
 sess = tf.InteractiveSession()
 tf.global_variables_initializer().run()
 
+saver = tf.train.Saver()
+
 train_images = tf.image.resize_images(mnist.train.images, [64, 64]).eval()
 train_images = (train_images - 0.5) / 0.5
 
@@ -110,12 +113,16 @@ for epoch in range(epochs):
         loss_g_this_iter, _ = sess.run([g_loss,g_optimizer], {z: Z, x: X, isTraining: True})
         d_losses_this_epoch.append(loss_d_this_iter)
         g_losses_this_epoch.append(loss_g_this_iter)
+    saver.save(sess, '/'.join(['models', str(epoch), model]))
 
     epoch_end_time = time.time()
     total_epoch_time = time.strftime("%H:%M:%S", time.gmtime(int(epoch_end_time - epoch_start_time)))
-    print('Epoch :{0}/{0} took time: '.format(str(epoch + 1),str(epochs)) + total_epoch_time +'    Discriminator loss: {0}    Generator loss: {0}' .format(str(np.mean(d_losses_this_epoch)), str(np.mean(g_losses_this_epoch))))
+    print('Epoch :{0}'.format(str(epoch + 1))+'/{0} took time: '.format(str(epochs)) + total_epoch_time +'    Discriminator loss: {0} '.format(str(np.mean(d_losses_this_epoch)))+ 'Generator loss: {0} '.format(str(np.mean(g_losses_this_epoch))))
     test_generator(epoch + 1)
 
+saver.save(sess, '/'.join(['models', model, model]))
+            
+print('Model \'%s\' saved in: \'%s/\'' % (model, '/'.join(['models', model])))
 training_end_time = time.time()
 total_training_time = time.strftime("%H:%M:%S", time.gmtime(int(training_end_time - training_start_time)))
 
